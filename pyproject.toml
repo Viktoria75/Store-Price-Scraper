@@ -55,10 +55,8 @@ markers = [
 source = ["price_tracker"]
 branch = true
 omit = [
-    "*/tests/*",
-    "*/__pycache__/*",
-    "*/gui/*",
-    "*/main.py",
+    "tests/*",
+    "*/__init__.py",
 ]
 
 [tool.coverage.report]

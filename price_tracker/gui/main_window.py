@@ -520,11 +520,23 @@ class MainWindow(QMainWindow):
             "CSV файлове (*.csv)",
         )
         if filepath:
-            products = self.storage.get_all_products()
-            DataExporter.export_products_to_csv(products, filepath)
-            self.status_label.setText(
-                f"Експортирани {len(products)} продукта"
-            )
+            try:
+                products = self.storage.get_all_products()
+                DataExporter.export_products_to_csv(products, filepath)
+                self.status_label.setText(
+                    f"Експортирани {len(products)} продукта"
+                )
+                QMessageBox.information(
+                    self,
+                    "Успех",
+                    f"Успешно експортирани {len(products)} продукта",
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    "Грешка",
+                    f"Грешка при експорт: {str(e)}",
+                )
 
     def _export_json(self) -> None:
         """Export products to JSON."""
@@ -535,11 +547,23 @@ class MainWindow(QMainWindow):
             "JSON файлове (*.json)",
         )
         if filepath:
-            products = self.storage.get_all_products()
-            DataExporter.export_products_to_json(products, filepath)
-            self.status_label.setText(
-                f"Експортирани {len(products)} продукта"
-            )
+            try:
+                products = self.storage.get_all_products()
+                DataExporter.export_products_to_json(products, filepath)
+                self.status_label.setText(
+                    f"Експортирани {len(products)} продукта"
+                )
+                QMessageBox.information(
+                    self,
+                    "Успех",
+                    f"Успешно експортирани {len(products)} продукта",
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    "Грешка",
+                    f"Грешка при експорт: {str(e)}",
+                )
 
     def _show_settings(self) -> None:
         """Show settings dialog."""
