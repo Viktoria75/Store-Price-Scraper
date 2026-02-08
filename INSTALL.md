@@ -104,6 +104,3 @@ pip install certifi
 pytest tests/ -v
 ```
 
-## Контакт
-
-При проблеми с инсталацията, създайте issue в GitHub хранилището.
