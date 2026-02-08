@@ -17,34 +17,72 @@
 
 ### Предварителни изисквания
 
-- Python 3.10 или по-нова версия
-- Google Chrome (за Selenium функционалност при динамични сайтове)
+- **Операционна система:** Windows 10+, macOS 10.15+, или Linux
+- **Python:** 3.10 или по-нова версия
+- **Браузър:** Google Chrome (за Selenium функционалност)
 
-### Стъпки за инсталация
+### Стъпка по стъпка инсталация
 
-1. **Клонирайте хранилището:**
-   ```bash
-   git clone <repository-url>
-   cd Project
-   ```
+#### 1. Проверете версията на Python
+```bash
+python --version
+```
+Ако Python не е инсталиран, изтеглете от: https://www.python.org/downloads/
 
-2. **Създайте виртуална среда:**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate  # Windows
-   # или
-   source venv/bin/activate  # Linux/macOS
-   ```
+#### 2. Клонирайте или изтеглете проекта
+```bash
+git clone <repository-url>
+cd Project
+```
 
-3. **Инсталирайте зависимостите:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### 3. Създайте виртуална среда (препоръчително)
 
-4. **За разработка (тестове, linting):**
-   ```bash
-   pip install -r requirements-dev.txt
-   ```
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Linux/macOS:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### 4. Инсталирайте зависимостите
+
+**Основни зависимости:**
+```bash
+pip install -r requirements.txt
+```
+
+**За разработка (тестове, linting, type checking):**
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Отстраняване на проблеми
+
+#### PyQt6 не се инсталира
+```bash
+pip install --upgrade pip
+pip install PyQt6
+```
+
+#### Selenium изисква Chrome WebDriver
+WebDriver се изтегля автоматично чрез `webdriver-manager`. Уверете се, че имате интернет връзка.
+
+#### Грешка при импорт на lxml (Windows)
+```bash
+pip install lxml
+# или
+pip install lxml --only-binary=:all:
+```
+
+#### SSL грешки
+```bash
+pip install certifi
+```
 
 ## ⚙️ Конфигурация
 
@@ -55,7 +93,7 @@
    - `DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...`
 
 2. **Локален файл:**
-   - Копирайте `src/data/settings.example.json` в `src/data/settings.json`.
+   - Копирайте `data/settings.example.json` в `data/settings.json`.
    - Попълнете данните си там. Този файл е игнориран от git.
 
 ## 📖 Използване
