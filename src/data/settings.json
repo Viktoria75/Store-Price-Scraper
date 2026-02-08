@@ -1,0 +1,17 @@
+{
+  "check_interval_minutes": 1,
+  "use_selenium_fallback": true,
+  "email": {
+    "enabled": true,
+    "smtp_server": "sandbox.smtp.mailtrap.io",
+    "smtp_port": 587,
+    "username": "4bc1f77bed06ae",
+    "password": "2b055100420052",
+    "from_address": "email@example.com",
+    "to_address": "recipient@example.com"
+  },
+  "discord": {
+    "enabled": true,
+    "webhook_url": "https://discord.com/api/webhooks/1469740489724133574/kpocE29NG8pEOAFq5kCMP-dxoDZkIPW1PbvV7EVjDnIt1jbUawVjE_qzcSfe7uZ6y30y"
+  }
+}
