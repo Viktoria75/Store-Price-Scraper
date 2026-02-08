@@ -97,13 +97,18 @@ class HttpScraper(BaseScraper):
         if tree is None:
             return None
         elements = tree.xpath(xpath)
+        
+        # Handle primitive types returned by xpath functions (string(), count(), etc.)
+        if isinstance(elements, (str, float, int, bool)):
+            return str(elements).strip()
+            
         if elements:
             if isinstance(elements[0], str):
                 return elements[0].strip()
-            if hasattr(elements[0], "text") and elements[0].text:
-                return elements[0].text.strip()
-            if hasattr(elements[0], "text_content"):
-                return elements[0].text_content().strip()
+            
+            # Robust way to get text content including children
+            # Works for both lxml.etree and lxml.html elements
+            return str(elements[0].xpath("string(.)")).strip()
         return None
 
     async def test_selector(

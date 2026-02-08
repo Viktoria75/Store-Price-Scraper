@@ -29,15 +29,27 @@ class DiscordNotifier:
 
     @classmethod
     def from_settings(cls, settings: dict) -> "DiscordNotifier":
-        """Create from app settings dict."""
+        """Create from app settings dict, with env var fallback."""
+        import os
+        
         discord_settings = settings.get("discord", {})
-        if not discord_settings.get("enabled", False):
+        enabled = discord_settings.get("enabled", False)
+        webhook_url = discord_settings.get("webhook_url", "").strip()
+        
+        # Check environment variable if webhook is missing or empty
+        env_webhook = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
+        
+        # If enabled in settings OR we have an env var, we try to configure it
+        if not enabled and not env_webhook:
             return cls(None)
+            
+        # Env var takes precedence if it exists, otherwise use settings
+        final_webhook = env_webhook if env_webhook else webhook_url
+        
+        if not final_webhook:
+             return cls(None)
 
-        config = DiscordConfig(
-            webhook_url=discord_settings.get("webhook_url", ""),
-        )
-        return cls(config)
+        return cls(DiscordConfig(webhook_url=final_webhook))
 
     async def send_price_alert(
         self, product: Product, old_price: Optional[float], new_price: float

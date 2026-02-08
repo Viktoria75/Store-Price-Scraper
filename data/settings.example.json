@@ -1,0 +1,17 @@
+{
+    "check_interval_minutes": 60,
+    "use_selenium_fallback": false,
+    "email": {
+        "enabled": false,
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "username": "your_email@gmail.com",
+        "password": "your_app_password",
+        "from_address": "your_email@gmail.com",
+        "to_address": "recipient@example.com"
+    },
+    "discord": {
+        "enabled": false,
+        "webhook_url": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    }
+}

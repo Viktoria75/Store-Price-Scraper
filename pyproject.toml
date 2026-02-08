@@ -47,11 +47,19 @@ disable = ["C0114", "C0115", "C0116"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "asyncio: mark a test as an asyncio test",
+]
 
 [tool.coverage.run]
 source = ["price_tracker"]
 branch = true
-omit = ["*/tests/*", "*/__pycache__/*"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/gui/*",
+    "*/main.py",
+]
 
 [tool.coverage.report]
 exclude_lines = [

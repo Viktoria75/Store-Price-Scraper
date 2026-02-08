@@ -175,3 +175,113 @@ class TestDataExporter:
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
         assert str(sample_price_record.price) in content
+
+    def test_export_history_json(
+        self,
+        temp_data_dir: str,
+        sample_price_record: PriceRecord,
+    ) -> None:
+        """Test price history JSON export."""
+        filepath = Path(temp_data_dir) / "history_export.json"
+        records = [sample_price_record]
+
+        DataExporter.export_history_to_json(records, filepath)
+        assert filepath.exists()
+
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        assert len(data) == 1
+        assert data[0]["price"] == sample_price_record.price
+
+    def test_import_invalid_json(self, temp_data_dir: str) -> None:
+        """Test importing invalid JSON file."""
+        filepath = Path(temp_data_dir) / "invalid.json"
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write("not valid json {{{")
+
+        with pytest.raises(ValueError, match="Invalid JSON"):
+            DataExporter.import_products_from_json(filepath)
+
+    def test_import_non_list_json(self, temp_data_dir: str) -> None:
+        """Test importing JSON that isn't a list."""
+        filepath = Path(temp_data_dir) / "not_list.json"
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump({"name": "test"}, f)
+
+        with pytest.raises(ValueError, match="must contain a list"):
+            DataExporter.import_products_from_json(filepath)
+
+    def test_import_csv_invalid_row(self, temp_data_dir: str) -> None:
+        """Test importing CSV with invalid product data."""
+        filepath = Path(temp_data_dir) / "invalid_row.csv"
+        with open(filepath, "w", encoding="utf-8", newline="") as f:
+            f.write("id,name\n")  # Missing required fields
+            f.write("123,Test\n")
+
+        with pytest.raises(ValueError, match="Invalid CSV row"):
+            DataExporter.import_products_from_csv(filepath)
+
+    def test_import_csv_with_all_boolean_values(self, temp_data_dir: str) -> None:
+        """Test importing CSV with various boolean representations."""
+        filepath = Path(temp_data_dir) / "booleans.csv"
+        with open(filepath, "w", encoding="utf-8", newline="") as f:
+            f.write("id,name,url,selector,selector_type,current_price,target_price,notify_on_drop,use_selenium,created_at,last_checked\n")
+            f.write("1,Test,https://example.com,.price,css,99.99,,true,1,,\n")
+
+        products = DataExporter.import_products_from_csv(filepath)
+        assert len(products) == 1
+        assert products[0].notify_on_drop is True
+        assert products[0].use_selenium is True
+
+    def test_import_csv_with_invalid_price(self, temp_data_dir: str) -> None:
+        """Test importing CSV with invalid price value."""
+        filepath = Path(temp_data_dir) / "invalid_price.csv"
+        with open(filepath, "w", encoding="utf-8", newline="") as f:
+            f.write("id,name,url,selector,selector_type,current_price,target_price,notify_on_drop,use_selenium,created_at,last_checked\n")
+            f.write("1,Test,https://example.com,.price,css,not_a_number,,false,false,,\n")
+
+        products = DataExporter.import_products_from_csv(filepath)
+        assert len(products) == 1
+        assert products[0].current_price is None
+
+
+class TestJsonStorageAdvanced:
+    """Additional tests for JsonStorage edge cases."""
+
+    def test_load_products_from_existing_file(self, temp_data_dir: str) -> None:
+        """Test loading products from pre-existing file."""
+        products_file = Path(temp_data_dir) / "products.json"
+        products_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        existing_data = [
+            {
+                "id": "existing-1",
+                "name": "Existing Product",
+                "url": "https://example.com",
+                "selector": ".price",
+                "selector_type": "css",
+                "created_at": "2024-01-01T00:00:00",
+                "notify_on_drop": True,
+                "use_selenium": False,
+            }
+        ]
+        with open(products_file, "w", encoding="utf-8") as f:
+            json.dump(existing_data, f)
+
+        storage = JsonStorage(data_dir=temp_data_dir)
+        products = storage.get_all_products()
+        assert len(products) == 1
+        assert products[0].name == "Existing Product"
+
+    def test_update_nonexistent_product(self, storage: JsonStorage) -> None:
+        """Test updating a product that doesn't exist."""
+        fake_product = Product(
+            id="nonexistent",
+            name="Fake",
+            url="https://example.com",
+            selector=".price",
+        )
+        result = storage.update_product(fake_product)
+        assert result is False
+
+

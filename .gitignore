@@ -32,7 +32,9 @@ htmlcov/
 
 # Data files (keep structure but ignore user data)
 data/*.json
+!data/*.example.json
 !data/.gitkeep
+exports/
 
 # Selenium/Browser
 *.log
